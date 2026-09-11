@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { db, invoices, invoiceItems, payments, patients, users } from "@lisa/db";
+import { db, invoices, invoiceItems, payments, patients, users, staff } from "@lisa/db";
 import { eq } from "drizzle-orm";
 import { sendSuccess, sendError } from "../utils/response";
 import { AuthRequest } from "../middleware/auth.middleware";
@@ -36,12 +36,19 @@ export const createInvoice = async (req: AuthRequest, res: Response) => {
 
     const { patientId, visitId, notes, paymentMethod, items } = parsed.data;
 
-    // Calculate total
     const totalAmount = items.reduce(
       (sum, item) => sum + item.quantity * item.unitPrice, 0
     );
 
-    // Create invoice
+    // Get staff record if exists
+    const staffRecord = await db
+      .select()
+      .from(staff)
+      .where(eq(staff.userId, req.user!.id))
+      .limit(1);
+
+    const generatedBy = staffRecord.length > 0 ? staffRecord[0].id : null;
+
     const [invoice] = await db.insert(invoices).values({
       patientId,
       visitId,
@@ -50,11 +57,10 @@ export const createInvoice = async (req: AuthRequest, res: Response) => {
       paidAmount:    "0",
       paymentStatus: "pending",
       paymentMethod,
-      generatedBy:   req.user!.id,
+      generatedBy,
       notes,
     }).returning();
 
-    // Create invoice items
     const invoiceItemsData = items.map(item => ({
       invoiceId:   invoice.id,
       description: item.description,
@@ -65,7 +71,6 @@ export const createInvoice = async (req: AuthRequest, res: Response) => {
 
     await db.insert(invoiceItems).values(invoiceItemsData);
 
-    // Fetch with items
     const itemsCreated = await db
       .select()
       .from(invoiceItems)
@@ -146,21 +151,28 @@ export const recordPayment = async (req: AuthRequest, res: Response) => {
     const totalAmount   = parseFloat(invoice.totalAmount);
 
     const paymentStatus =
-      newPaidAmount >= totalAmount ? "paid" :
+      newPaidAmount >= totalAmount ? "paid"    :
       newPaidAmount > 0            ? "partial" : "pending";
 
-    // Record payment
+    // Get staff record if exists
+    const staffRecord = await db
+      .select()
+      .from(staff)
+      .where(eq(staff.userId, req.user!.id))
+      .limit(1);
+
+    const receivedBy = staffRecord.length > 0 ? staffRecord[0].id : null;
+
     const [payment] = await db.insert(payments).values({
       invoiceId:       id,
       patientId:       invoice.patientId,
       amount:          parsed.data.amount.toString(),
       paymentMethod:   parsed.data.paymentMethod,
       referenceNumber: parsed.data.referenceNumber,
-      receivedBy:      req.user!.id,
+      receivedBy,
       notes:           parsed.data.notes,
     }).returning();
 
-    // Update invoice
     await db.update(invoices).set({
       paidAmount:    newPaidAmount.toString(),
       paymentStatus,
