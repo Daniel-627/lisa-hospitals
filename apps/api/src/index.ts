@@ -8,6 +8,7 @@ import { departmentRoutes } from "./routes/department.routes";
 import { doctorRoutes } from "./routes/doctor.routes";
 import { appointmentRoutes } from "./routes/appointment.routes";
 import { patientRoutes } from "./routes/patient.routes";
+import { staffRoutes } from "./routes/staff.routes";
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -32,6 +33,7 @@ app.use("/api/departments",  departmentRoutes);
 app.use("/api/doctors",      doctorRoutes);
 app.use("/api/appointments", appointmentRoutes);
 app.use("/api/patients",     patientRoutes);
+app.use("/api/staff", staffRoutes);
 
 // ── 404 ───────────────────────────────────────────────────────────────────────
 app.use((req, res) => {
