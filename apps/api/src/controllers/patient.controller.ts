@@ -8,13 +8,13 @@ import { z } from "zod";
 const updateSchema = z.object({
   dateOfBirth:       z.string().optional(),
   gender:            z.enum(["male", "female", "other"]).optional(),
-  bloodGroup:        z.string().optional(),
+  bloodGroup:        z.enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]).optional(),
   nationalId:        z.string().optional(),
   address:           z.string().optional(),
   nextOfKinName:     z.string().optional(),
   nextOfKinPhone:    z.string().optional(),
   nextOfKinRelation: z.string().optional(),
-  insuranceScheme:   z.string().optional(),
+  insuranceScheme:   z.enum(["cash", "mpesa", "sha", "maki", "aon", "mtiba", "pesapal"]).optional(),
   insuranceNumber:   z.string().optional(),
   allergies:         z.string().optional(),
 });
