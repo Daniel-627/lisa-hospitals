@@ -1,6 +1,12 @@
 import { Router } from "express";
+import {
+  getAllDoctors,
+  getDoctorById,
+  getDoctorAvailability,
+} from "../controllers/doctor.controller";
+
 export const doctorRoutes = Router();
 
-doctorRoutes.get("/", (req, res) => {
-  res.json({ message: "Doctor routes coming soon" });
-});
+doctorRoutes.get("/",                    getAllDoctors);
+doctorRoutes.get("/:id",                 getDoctorById);
+doctorRoutes.get("/:id/availability",    getDoctorAvailability);
