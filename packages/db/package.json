@@ -2,28 +2,26 @@
   "name": "@lisa/db",
   "version": "1.0.0",
   "description": "Lisa Hospitals database schema and client",
-  "main": "./src/index.ts",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": "./dist/index.js"
+  },
   "scripts": {
+    "build": "tsc",
     "db:push": "drizzle-kit push",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
     "db:generate": "drizzle-kit generate"
   },
-  "exports": {
-    ".": "./src/index.ts"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@types/node": "^20.19.43",
-    "drizzle-kit": "^0.31.10",
-    "tsx": "^4.23.13",
-    "typescript": "^5.9.3"
-  },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",
+    "@types/node": "^20.0.0",
     "dotenv": "^17.4.2",
-    "drizzle-orm": "^0.45.2"
+    "drizzle-orm": "^0.45.2",
+    "typescript": "^5.3.0"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.31.10",
+    "tsx": "^4.23.13"
   }
 }
