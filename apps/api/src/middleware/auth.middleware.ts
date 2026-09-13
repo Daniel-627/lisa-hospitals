@@ -1,15 +1,15 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { sendError } from "../utils/response";
+import { sendError } from "../utils/response.js";
 import { UserRole } from "@lisa/types";
 
 export interface AuthRequest extends Request {
   user?: { id: string; role: UserRole; email: string };
 }
 
-export const authenticate = (req: AuthRequest, res: Response, next: NextFunction) => {
+export const authenticate = (req: AuthRequest, res: Response, next: NextFunction): void => {
   const token = req.headers.authorization?.split(" ")[1];
-  if (!token) return sendError(res, "No token provided", 401);
+  if (!token) { sendError(res, "No token provided", 401); return; }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
@@ -18,14 +18,15 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
     req.user = decoded;
     next();
   } catch {
-    return sendError(res, "Invalid or expired token", 401);
+    sendError(res, "Invalid or expired token", 401);
   }
 };
 
 export const authorize = (...roles: UserRole[]) => {
-  return (req: AuthRequest, res: Response, next: NextFunction) => {
+  return (req: AuthRequest, res: Response, next: NextFunction): void => {
     if (!req.user || !roles.includes(req.user.role)) {
-      return sendError(res, "Access denied", 403);
+      sendError(res, "Access denied", 403);
+      return;
     }
     next();
   };

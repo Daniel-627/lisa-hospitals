@@ -1,11 +1,6 @@
 import { Router } from "express";
-import {
-  getMyProfile,
-  updateMyProfile,
-  getMyDocuments,
-  getMyVisits,
-} from "../controllers/patient.controller";
-import { authenticate, authorize } from "../middleware/auth.middleware";
+import { getMyProfile, updateMyProfile, getMyDocuments, getMyVisits } from "../controllers/patient.controller.js";
+import { authenticate, authorize } from "../middleware/auth.middleware.js";
 
 export const patientRoutes = Router();
 

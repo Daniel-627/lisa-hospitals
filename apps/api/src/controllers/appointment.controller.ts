@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { db, appointments, patients, doctors, departments } from "@lisa/db";
 import { eq, and } from "drizzle-orm";
-import { sendSuccess, sendError } from "../utils/response";
-import { AuthRequest } from "../middleware/auth.middleware";
+import { sendSuccess, sendError } from "../utils/response.js";
+import { AuthRequest } from "../middleware/auth.middleware.js";
 import { z } from "zod";
 
 const createSchema = z.object({
