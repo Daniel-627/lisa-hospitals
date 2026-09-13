@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { db, invoices, invoiceItems, payments, patients, users, staff } from "@lisa/db";
 import { eq } from "drizzle-orm";
-import { sendSuccess, sendError } from "../utils/response";
-import { AuthRequest } from "../middleware/auth.middleware";
+import { sendSuccess, sendError } from "../utils/response.js";
+import { AuthRequest } from "../middleware/auth.middleware.js";
 import { z } from "zod";
 
 const invoiceSchema = z.object({

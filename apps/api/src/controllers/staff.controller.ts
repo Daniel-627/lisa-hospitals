@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { db, patients, users, appointments, visits, documents, departments } from "@lisa/db";
 import { eq, count } from "drizzle-orm";
-import { sendSuccess, sendError } from "../utils/response";
-import { AuthRequest } from "../middleware/auth.middleware";
+import { sendSuccess, sendError } from "../utils/response.js";
+import { AuthRequest } from "../middleware/auth.middleware.js";
 import { z } from "zod";
 
 export const getStaffDashboard = async (req: AuthRequest, res: Response) => {
@@ -150,9 +150,15 @@ export const uploadDocument = async (req: AuthRequest, res: Response) => {
     }
 
     const [doc] = await db.insert(documents).values({
-      ...parsed.data,
-      uploadedBy: req.user!.id,
-      isVisible:  true,
+      patientId:    parsed.data.patientId,
+      documentType: parsed.data.documentType,
+      title:        parsed.data.title,
+      fileUrl:      parsed.data.fileUrl,
+      fileSize:     parsed.data.fileSize,
+      mimeType:     parsed.data.mimeType,
+      relatedId:    parsed.data.relatedId,
+      uploadedBy:   req.user!.id as any,
+      isVisible:    true,
     }).returning();
 
     return sendSuccess(res, doc, "Document uploaded successfully", 201);
