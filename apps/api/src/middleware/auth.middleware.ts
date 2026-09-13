@@ -3,9 +3,9 @@ import jwt from "jsonwebtoken";
 import { sendError } from "../utils/response.js";
 import { UserRole } from "@lisa/types";
 
-export interface AuthRequest extends Request {
+export type AuthRequest = Request & {
   user?: { id: string; role: UserRole; email: string };
-}
+};
 
 export const authenticate = (req: AuthRequest, res: Response, next: NextFunction): void => {
   const token = req.headers.authorization?.split(" ")[1];
